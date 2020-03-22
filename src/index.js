@@ -4,10 +4,29 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+import { createStore, applyMiddleware, compose } from 'redux'
+import reducer from './store/reducer'
+import { Provider } from 'react-redux'
+
+const composeEnhancer =  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+
+const logger = store => {
+  return next => {
+    return action => {
+      // console.log('[Middleware_logger] Dispatching', action)
+      const result = next(action)
+      // console.log('[Middleware_logger] state', store.getState())
+      return result
+    }
+  }
+}
+
+const store = createStore(reducer, composeEnhancer(applyMiddleware(logger)))
+
 ReactDOM.render(
-  <React.StrictMode>
+  <Provider store={store}>
     <App />
-  </React.StrictMode>,
+  </Provider>,
   document.getElementById('root')
 );
 
